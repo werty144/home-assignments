@@ -17,6 +17,7 @@ import pims
 
 from _corners import FrameCorners, CornerStorage, StorageImpl
 from _corners import dump, load, draw, without_short_tracks, create_cli
+from tracks import get_corners_video
 
 
 class _CornerStorageBuilder:
@@ -36,17 +37,10 @@ class _CornerStorageBuilder:
 
 def _build_impl(frame_sequence: pims.FramesSequence,
                 builder: _CornerStorageBuilder) -> None:
-    # TODO
-    image_0 = frame_sequence[0]
-    corners = FrameCorners(
-        np.array([0]),
-        np.array([[0, 0]]),
-        np.array([55])
-    )
-    builder.set_corners_at_frame(0, corners)
-    for frame, image_1 in enumerate(frame_sequence[1:], 1):
-        builder.set_corners_at_frame(frame, corners)
-        image_0 = image_1
+    idss, cornerss, radiii = get_corners_video(frame_sequence, 2)
+    for i, (ids, corners, radii) in enumerate(zip(idss, cornerss, radiii)):
+        frame_corners = FrameCorners(ids, corners, radii)
+        builder.set_corners_at_frame(i, frame_corners)
 
 
 def build(frame_sequence: pims.FramesSequence,

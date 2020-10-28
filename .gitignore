@@ -13,3 +13,6 @@ pip-delete-this-directory.txt
 .idea/*
 venv/*
 .gitignore
+
+out/
+videos/
