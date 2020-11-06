@@ -55,8 +55,8 @@ def camera_pos(frame_n, corner_storage, pcb, intrinsic_mat, outliers):
     print(f'{len(points_ids)} points in cloud')
     print(f'{len(inlier_corners)} inliers')
 
-    _, r_vec, t_vec, inliers = cv2.solvePnPRansac(inlier_points, inlier_corners, intrinsic_mat, None,
-                                                  r_vec, t_vec, useExtrinsicGuess=True)
+    _, r_vec, t_vec = cv2.solvePnP(inlier_points, inlier_corners, intrinsic_mat, None,
+                                   r_vec, t_vec, useExtrinsicGuess=True, flags=cv2.SOLVEPNP_ITERATIVE)
 
     return r_vec, t_vec, np.array(inliers).size
 
@@ -111,9 +111,13 @@ def track(intrinsic_mat, corner_storage, known_view_1, known_view_2):
     cur_frame = start_frame1 + 1
     for _ in range(2, frame_n):
         cur_frame += cur_frame == start_frame2
+        cur_frame %= frame_n
 
-        print(f'Current frame: {cur_frame}')
-        rvec, tvec, _ = camera_pos(cur_frame, corner_storage, pcb, intrinsic_mat, outliers)
+        cam_pos = camera_pos(cur_frame, corner_storage, pcb, intrinsic_mat, outliers)
+        if cam_pos is None:
+            cur_frame = cur_frame + 1 if cur_frame > start_frame1 else cur_frame - 1
+            continue
+        rvec, tvec, _ = cam_pos
         tracked_positions[cur_frame] = rodrigues_and_translation_to_view_mat3x4(rvec, tvec)
         frame_diff = 5
         pairs_cnt = 0
