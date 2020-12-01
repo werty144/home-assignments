@@ -20,7 +20,7 @@ from _camtrack import (
     view_mat3x4_to_pose
 )
 
-from camera_track import track
+from camera_track import CameraTracker
 
 
 def track_and_calc_colors(camera_parameters: CameraParameters,
@@ -38,7 +38,9 @@ def track_and_calc_colors(camera_parameters: CameraParameters,
         rgb_sequence[0].shape[0]
     )
 
-    view_mats, point_cloud_builder = track(intrinsic_mat, corner_storage, known_view_1, known_view_2)
+    print(known_view_2)
+    view_mats, point_cloud_builder = CameraTracker(intrinsic_mat, corner_storage, known_view_1, known_view_2,
+                                                   len(rgb_sequence)).track()
 
     calc_point_cloud_colors(
         point_cloud_builder,
