@@ -69,8 +69,7 @@ def get_pose_with_score(frame_1, frame_2, corner_storage, intrinsic_mat):
 
     candidates = [Pose(R1.T, R1.T @ t), Pose(R1.T, R1.T @ (-t)), Pose(R2.T, R2.T @ t), Pose(R2.T, R2.T @ (-t))]
 
-    ScoreNPose = namedtuple('PoseNScore', ['pose', 'score'])
-    best_pose_n_score = ScoreNPose(0, None)
+    best_pose_score, best_pose = 0, None
 
     triangulation_parameters = TriangulationParameters(1, 2, .1)
     for pose in candidates:
@@ -79,10 +78,11 @@ def get_pose_with_score(frame_1, frame_2, corner_storage, intrinsic_mat):
                                                    pose_to_view_mat3x4(pose),
                                                    intrinsic_mat,
                                                    triangulation_parameters)
-        if len(points) > best_pose_n_score.score:
-            best_pose_n_score = ScoreNPose(pose, len(points))
+        if len(points) > best_pose_score:
+            best_pose_score = len(points)
+            best_pose = pose
 
-    return best_pose_n_score
+    return best_pose, best_pose_score
 
 
 def track_and_calc_colors(camera_parameters: CameraParameters,
