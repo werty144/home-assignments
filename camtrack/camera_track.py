@@ -19,24 +19,12 @@ import cv2
 
 
 class PointInfo:
-    """
-    Class for storing info about point from the cloud.
-    It's position and number of inliers which can show
-    how good this position is.
-    """
-
     def __init__(self, pos, inliers):
         self.pos = pos
         self.inliers = inliers
 
 
 class CameraInfo:
-    """
-    Class for storing info about found camera position.
-    It's position and number of inliers which can show
-    how good this position is.
-    """
-
     def __init__(self, pos, inliers):
         self.pos = pos
         self.inliers = inliers
