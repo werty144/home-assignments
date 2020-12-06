@@ -109,13 +109,18 @@ class CameraTracker:
             return None  # Not enough points for ransac
         # find inliers and initial position of the camera
         is_success, r_vec, t_vec, inliers = cv2.solvePnPRansac(common_cloud_pts, common_corners, self.intrinsic_mat,
-                                                               None, flags=cv2.SOLVEPNP_EPNP, reprojectionError=1.6)
+                                                               None, flags=cv2.SOLVEPNP_EPNP)
         if not is_success:
             return None
 
         # specify PnP solution with iterative minimization of reprojection error using inliers
-        _, r_vec, t_vec, _ = cv2.solvePnPRansac(common_cloud_pts[inliers], common_corners[inliers], self.intrinsic_mat,
-                                                None, r_vec, t_vec, useExtrinsicGuess=True)
+        _, r_vec, t_vec = cv2.solvePnP(common_cloud_pts[inliers], common_corners[inliers], self.intrinsic_mat,
+                                       distCoeffs=None,
+                                       flags=cv2.SOLVEPNP_ITERATIVE,
+                                       useExtrinsicGuess=True,
+                                       rvec=r_vec,
+                                       tvec=t_vec
+                                       )
 
         return r_vec, t_vec, len(np.array(inliers).flatten())
 
