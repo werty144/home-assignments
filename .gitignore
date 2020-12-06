@@ -16,3 +16,6 @@ venv/*
 
 out/
 videos/
+
+data_examples
+test_data

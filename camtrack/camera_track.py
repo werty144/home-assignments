@@ -256,7 +256,7 @@ class CameraTracker:
                     f'Can not get more camera positions, '
                     f'{self.num_of_frames - num_of_defined_poses}'
                     f' frames left without defined camera position')
-                self.tracked_poses = [view_mat3x4_to_pose(eye3x4()) if pos is None
+                self.tracked_poses = [TrackedPoseInfo(view_mat3x4_to_pose(eye3x4()), 0) if pos is None
                                       else pos for pos in self.tracked_poses]
                 break
 
