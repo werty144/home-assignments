@@ -23,7 +23,8 @@ from _camtrack import (
     rodrigues_and_translation_to_view_mat3x4,
     TriangulationParameters,
     Correspondences,
-    compute_reprojection_errors
+    compute_reprojection_errors,
+    eye3x4
 )
 import cv2
 
@@ -251,10 +252,13 @@ class CameraTracker:
                     new_poses_info.append((frame, found_pos_info))
 
             if len(new_poses_info) == 0:
-                raise CameraTrackerError(
+                print(
                     f'Can not get more camera positions, '
                     f'{self.num_of_frames - num_of_defined_poses}'
                     f' frames left without defined camera position')
+                self.tracked_poses = [view_mat3x4_to_pose(eye3x4()) if pos is None
+                                      else pos for pos in self.tracked_poses]
+                break
 
             best_frame = None
             best_new_pos_info = None
