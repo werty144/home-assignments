@@ -56,6 +56,9 @@ def get_pose_with_score(frame_1, frame_2, corner_storage, intrinsic_mat):
         method=cv2.RANSAC,
         threshold=1.0)
 
+    if essential_mat is None or mask_essential is None:
+        return None, 0
+
     _, mask_homography = cv2.findHomography(correspondences[1], correspondences[2], method=cv2.RANSAC)
 
     essential_inliers, homography_inliers = mask_essential.flatten().sum(), mask_homography.flatten().sum()
